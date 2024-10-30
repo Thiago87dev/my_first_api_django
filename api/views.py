@@ -33,7 +33,7 @@ class ItemViewSet(viewsets.ModelViewSet):
     serializer_class = ItemSerializer
     filter_backends = [DjangoFilterBackend, filters.SearchFilter]  # Adiciona os backends de filtro
     filterset_fields = ['name', 'category']  # Campos que podem ser filtrados
-    search_fields = ['name', 'description']  # Campos que podem ser buscados
+    search_fields = ['name', 'category__name']  # Campos que podem ser buscados
 
 
 class CategoryViewSet(viewsets.ModelViewSet):
