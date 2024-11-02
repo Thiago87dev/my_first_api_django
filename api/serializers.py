@@ -1,5 +1,5 @@
 from rest_framework import serializers
-from .models import Item, Category
+from .models import Item, Category, AddOperation
 
 
 class CategorySerializer(serializers.ModelSerializer):
@@ -38,3 +38,18 @@ class ItemSerializer(serializers.ModelSerializer):
             instance.category = category
         instance.save()
         return instance
+
+
+class AddSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = AddOperation
+        fields = '__all__'
+        read_only_fields = ['result', 'created_at']  # resultado e data de crição são apenas leitura
+
+    def create(self, validated_data):
+        # validated_data['result'] = validated_data['valor1'] + validated_data['valor2']
+        valor1 = validated_data.get('valor1')
+        valor2 = validated_data.get('valor2')
+        # Realiza a soma e salva o resultado
+        validated_data['result'] = valor1 + valor2
+        return super().create(validated_data)

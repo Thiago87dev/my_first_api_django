@@ -1,8 +1,8 @@
 from rest_framework.response import Response
 from rest_framework.views import APIView
 from rest_framework import viewsets, filters
-from .models import Item, Category
-from .serializers import ItemSerializer, CategorySerializer
+from .models import Item, Category, AddOperation
+from .serializers import ItemSerializer, CategorySerializer, AddSerializer
 from django_filters.rest_framework import DjangoFilterBackend
 
 
@@ -39,3 +39,19 @@ class ItemViewSet(viewsets.ModelViewSet):
 class CategoryViewSet(viewsets.ModelViewSet):
     queryset = Category.objects.all()
     serializer_class = CategorySerializer
+
+
+class AddView(viewsets.ModelViewSet):
+    queryset = AddOperation.objects.all().order_by('-created_at')
+    serializer_class = AddSerializer
+    pagination_class = None
+
+    def list(self, request, *args, **kwargs):
+        limit = request.query_params.get('limit', None)
+        queryset = self.get_queryset()
+
+        if limit is not None:
+            queryset = queryset[:int(limit)]
+
+        serializer = self.get_serializer(queryset, many=True)
+        return Response(serializer.data)
