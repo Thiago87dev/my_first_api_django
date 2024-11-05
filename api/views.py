@@ -1,9 +1,10 @@
 from rest_framework.response import Response
 from rest_framework.views import APIView
-from rest_framework import viewsets, filters
+from rest_framework import viewsets, filters, status
 from .models import Item, Category, AddOperation
-from .serializers import ItemSerializer, CategorySerializer, AddSerializer
+from .serializers import ItemSerializer, CategorySerializer, AddSerializer, UserRegisterSerializer
 from django_filters.rest_framework import DjangoFilterBackend
+from rest_framework.permissions import IsAuthenticated
 
 
 class HelloDRFView(APIView):
@@ -42,6 +43,8 @@ class CategoryViewSet(viewsets.ModelViewSet):
 
 
 class AddView(viewsets.ModelViewSet):
+    permission_classes = [IsAuthenticated,]
+
     queryset = AddOperation.objects.all().order_by('-created_at')
     serializer_class = AddSerializer
     pagination_class = None
@@ -55,3 +58,14 @@ class AddView(viewsets.ModelViewSet):
 
         serializer = self.get_serializer(queryset, many=True)
         return Response(serializer.data)
+
+
+class UserRegisterView(APIView):
+    permission_classes = []
+
+    def post(self, request):
+        serializer = UserRegisterSerializer(data=request.data)
+        if serializer.is_valid():
+            serializer.save()
+            return Response({"message": "Usuário criado com sucesso"}, status=status.HTTP_201_CREATED)
+        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
