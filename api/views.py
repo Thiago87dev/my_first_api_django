@@ -30,6 +30,7 @@ class HelloDRFView(APIView):
 
 
 class ItemViewSet(viewsets.ModelViewSet):
+    permission_classes = []
     queryset = Item.objects.all()
     serializer_class = ItemSerializer
     filter_backends = [DjangoFilterBackend, filters.SearchFilter]  # Adiciona os backends de filtro
@@ -38,6 +39,7 @@ class ItemViewSet(viewsets.ModelViewSet):
 
 
 class CategoryViewSet(viewsets.ModelViewSet):
+    permission_classes = []
     queryset = Category.objects.all()
     serializer_class = CategorySerializer
 
